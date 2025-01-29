@@ -14,7 +14,8 @@ export default function App() {
   const add = useCallback((name) => {
     const newItem = {
       id: uuid.v4(),
-      name: name
+      name: name,
+      done: false
     }
     const tempData = [...data, newItem]
     setData(tempData)
