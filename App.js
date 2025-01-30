@@ -1,6 +1,7 @@
 import Row from './components/Row';
-import { useCallback, useState } from 'react';
+import { useCallback, useState, useEffect } from 'react';
 import { FlatList, SafeAreaView,  StyleSheet, Text,  View } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import Constants from 'expo-constants'
 import uuid from 'react-native-uuid'
 import Add from './components/Add';
@@ -10,16 +11,41 @@ export default function App() {
   const [data, setData] = useState([])
   const [selectedId, setSelectedId] = useState(null)
 
+   useEffect(() => {
+    getData()
+   }, [])
+
+   useEffect(() => {
+    storeData();
+  }, [data])
+   
+  const storeData = async () => {
+    try {
+      const jsonValue = JSON.stringify(data)
+      await AsyncStorage.setItem('todoData', jsonValue)
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  const getData = async () => {
+    try {
+      const value = await AsyncStorage.getItem('todoData')
+      if (value !== null){
+        setData(JSON.parse(value))
+      }
+    } catch (error) {
+      console.log(error)
+    }
+  }
 
   const add = useCallback((name) => {
-    const newItem = {
-      id: uuid.v4(),
-      name: name,
-      done: false
-    }
-    const tempData = [...data, newItem]
-    setData(tempData)
-  }, [data])
+    setData((prevData) => [
+      ...prevData,
+      { id: uuid.v4(), name, done: false }
+    ]);
+  }, []);
+  
 
   const select = useCallback((id) => {
     setSelectedId(id);

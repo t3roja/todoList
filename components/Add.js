@@ -1,6 +1,5 @@
 import React, { useState } from 'react'
 import { View, StyleSheet, TextInput, Button } from 'react-native'
-import Constants from 'expo-constants'
 
 
 export default function Add({add}) {
@@ -8,8 +7,10 @@ export default function Add({add}) {
     const [name, setName] = useState('')
 
       const save = () => {
+        if (name !== ''){
         add(name)
         setName('')
+        }
       }
 
     return (
